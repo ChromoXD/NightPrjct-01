@@ -6,6 +6,7 @@
 
 void Start();
 void Update();
+bool AllKeyCheck();
 Vector3 Player_Movement();
 Vector3 Player_Rotation();
 
@@ -97,55 +98,48 @@ void Update() {
 
 Vector3 Player_Movement() {
 
-    float frequency = 5;
-    float amplitude = 0.01;
+    float frequency = 30;
+    float amplitude = 0.005f;
+
+    float cosFun = 0;
+    float sinFun = 0;
+
+    float Move_Y = 0;
+    float Move_X = 0;
 
     if (IsKeyDown(KEY_LEFT_CONTROL))
     {
         Mvmt_Speed = 0.06f;
-        if (IsKeyDown(KEY_W) ||
-            IsKeyDown(KEY_A) ||
-            IsKeyDown(KEY_S) ||
-            IsKeyDown(KEY_D)) {
+        if (AllKeyCheck) {
             if (camera.fovy <= 100)
             {
+                frequency = 50;
                 camera.fovy += 2.5;
             }
         }
     }
     else {
         Mvmt_Speed = 0.03f;
-        if (camera.fovy > 90)
-        {
-            camera.fovy -= 2.5;
-        }
+        if (camera.fovy > 90) camera.fovy -= 2.5;
     } 
 
     //X-Axis Movement
-    float Move_X = Mvmt_Speed * (IsKeyDown(KEY_W) - IsKeyDown(KEY_S));
+    Move_X = Mvmt_Speed * (IsKeyDown(KEY_W) - IsKeyDown(KEY_S));
 
 
     //Y-Axis Movement
-    float Move_Y = Mvmt_Speed * (IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
+    Move_Y = Mvmt_Speed * (IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
 
-    //Z-Wobble Movement
-    float WBl_Z = 0;
-
-    if (IsKeyDown(KEY_W) ||
-        IsKeyDown(KEY_A) ||
-        IsKeyDown(KEY_S) ||
-        IsKeyDown(KEY_D))
-        WBl_Z = sin(GetTime() * frequency) * amplitude;
-    else
-        WBl_Z = 0;
+    if (AllKeyCheck()) {
+        sinFun = sin(GetTime() * frequency) * amplitude;
+        cosFun = cos(GetTime() * frequency / 2) * amplitude *2 ;
+    }
 
 
-    return { Move_X, Move_Y - WBl_Z, WBl_Z };
+    return { Move_X + cosFun , Move_Y + sinFun, cosFun };
 }
 
-Vector3 Player_Rotation(){
-
-    //frequency = 10;
+Vector3 Player_Rotation() {
 
     //X-Axis Rotation
     float RttX = Rtt_Speed * GetMouseDelta().x;
@@ -153,6 +147,49 @@ Vector3 Player_Rotation(){
     //Y-Axis Rotation
     float RttY = Rtt_Speed * GetMouseDelta().y;
 
+    float RttZ = 0;
+    float rtn_Cntr = 0;
 
-    return {RttX, RttY, 0};
+    if (IsKeyUp(KEY_A) || IsKeyUp(KEY_A) && rtn_Cntr != 0)
+    {
+        RttZ = 0;
+        rtn_Cntr = 0;
+    }
+
+    if (IsKeyDown(KEY_A))
+    {
+        if (rtn_Cntr >= -1) {
+            RttZ -= 0.1;
+            rtn_Cntr -= 0.1;
+        }
+        else
+        {
+            RttZ += 0.1;
+        }
+    }
+
+    if (IsKeyDown(KEY_D))
+    {
+        if (rtn_Cntr <= 1) {
+            RttZ += 0.1;
+            rtn_Cntr += 0.1;
+        }
+        else
+        {
+            RttZ -= 0.1;
+        }
+
+    }
+
+    std::cout << rtn_Cntr << " " << RttZ;
+
+    return {RttX, RttY, RttZ };
+}
+
+bool AllKeyCheck() {
+    if (IsKeyDown(KEY_W) ||
+        IsKeyDown(KEY_A) ||
+        IsKeyDown(KEY_S) ||
+        IsKeyDown(KEY_D)) return true;
+    else return false;
 }
