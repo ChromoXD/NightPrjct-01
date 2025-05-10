@@ -18,5 +18,14 @@
     <ClCompile Include="NightPrjct-01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NightPrjtHdr.hpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerMovement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerRotation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
