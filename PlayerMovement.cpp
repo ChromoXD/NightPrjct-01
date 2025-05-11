@@ -4,6 +4,7 @@ Vector3 Player_Movement() {
     //Maigc Salts...
     float cosFun = 0;
     float sinFun = 0;
+   float jumpFun = 0;
     float Move_Y = 0;
     float Move_X = 0;
     float Normalises_speed = (float)2 / 3;
@@ -25,7 +26,7 @@ Vector3 Player_Movement() {
                 camera.fovy += 2.5;
             }
         }
-        //Walk Magic
+        //Sneak Magic
         else if (IsKeyDown(KEY_LEFT_SHIFT)) {
             Mvmt_Speed = 0.01f;
             if (camera.fovy > 80)
@@ -68,19 +69,24 @@ Vector3 Player_Movement() {
         IsKeyDown(KEY_S) ||
         IsKeyDown(KEY_D)) {
         sinFun = sin(GetTime() * frequency) * amplitude;
-        cosFun = cos(GetTime() * frequency / 2) * amplitude * 2;
+        cosFun = cos(GetTime() * frequency / 2) * amplitude;
     }
 
+    auto start = 0.0f;
+    auto end = 0.0f;
 
     //Jump Magic
-    if (IsKeyDown(KEY_SPACE)) {
-        auto start = std::chrono::high_resolution_clock::now();
-
-        auto end = std::chrono::high_resolution_clock::now();
-
+    if (camera.position.y < 2)
+    {
+        jumpFun -= Player_Y_Velocity;
+        Player_Y_Velocity += gravity;
+    }
+    else
+    {
+        jumpFun = 2;
     }
 
 
     //Final Magical Values
-    return { Move_X + cosFun , Move_Y + sinFun, cosFun };
+    return { Move_X + cosFun , Move_Y + sinFun, jumpFun + cosFun };
 }
